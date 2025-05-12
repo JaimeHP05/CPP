@@ -1,6 +1,6 @@
-add_library(tv tv.cc tv.h)
-target_include_directories(tv PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+add_library(computer computer.cc computer.h)
+target_include_directories(computer PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
-add_executable(tv-main tv-main.cc)
-target_link_libraries(tv-main PUBLIC tv)
-target_link_libraries(tv PUBLIC product)
+add_executable(computer-main computer-main.cc)
+target_link_libraries(computer-main PUBLIC computer)
+target_link_libraries(computer PUBLIC product)
