@@ -1,82 +1,107 @@
+#include <iostream>
+#include <string>
 #include "basket.h"
+#include "product.h"
 
-void Basket::AddProduct(Product item){
-	std::list<Product>::iterator position;
-	for(position = product_list_.begin(); position != product_list_.end(); position++) {
-		if((*position).GetId() == item.GetId()) {break;}
-	}
-	if(position == product_list_.end()) {
-		product_list_.push_back(item);
-		product_quantity_[item.GetId()] = 1;
-		}
-	else {
-		product_quantity_[item.GetId()]++;
-	}
-	total_ = total_ + item.GetPrice();
+void ShowMenu() {
+	std::cout << "1. Añadir Producto\n";
+	std::cout << "2. Eliminar Producto por Objeto\n";
+	std::cout << "3. Eliminar Producto por ID\n";
+	std::cout << "4. Vaciar Cesta\n";
+	std::cout << "5. Obtener Tamaño\n";
+	std::cout << "6. Obtener Total\n";
+	std::cout << "7. Obtener IDs de Productos\n";
+	std::cout << "8. Obtener Cantidades de Productos\n";
+	std::cout << "9. Salir\n";
 }
 
-bool Basket::DeleteProduct(Product item){
-	std::list<Product>::iterator position;
-	for(position = product_list_.begin(); position != product_list_.end(); position++) {
-		if((*position).GetId() == item.GetId()) {break;}
-	}
-	if(position == product_list_.end()) {
-		return false;
-		}
-	else {
-		if((product_quantity_[item.GetId()] = product_quantity_[item.GetId()] - 1) <= 0){
-			product_list_.erase(position);
-			product_quantity_.erase(item.GetId());
-		}
-	}
-	total_ = total_ - item.GetPrice();
-	return true;
-}
+int main() {
+	Basket basket;
+	int choice;
+	std::string id, name, maker, seller;
+	float price;
 
-bool Basket::DeleteProduct(std::string id){
-	std::list<Product>::iterator position;
-	for(position = product_list_.begin(); position != product_list_.end(); position++) {
-		if((*position).GetId() == id) {break;}
-	}
-	if(position == product_list_.end()) {
-		return false;
-		}
-	else {
-		total_ = total_ - (*position).GetPrice();
-		if((product_quantity_[id] = product_quantity_[id] - 1) <= 0){
-			product_list_.erase(position);
-			product_quantity_.erase(id);
-		}
-	}
-	return true;
-}
+	do {
+		ShowMenu();
+        	std::cout << "Ingrese su opción: ";
+        	std::cin >> choice;
 
-void Basket::DeleteBasket(){ 
-	total_ = 0.0;
-	product_list_.clear();
-	product_quantity_.clear();
-}
+        	switch (choice) {
+			case 1:
+                		std::cout << "Ingrese el ID del producto: ";
+                		std::cin >> id;
+                		std::cout << "Ingrese el nombre del producto: ";
+                		std::cin >> name;
+                		std::cout << "Ingrese el precio del producto: ";
+                		std::cin >> price;
+                		std::cout << "Ingrese el fabricante del producto: ";
+                		std::cin >> maker;
+                		std::cout << "Ingrese el vendedor del producto: ";
+                		std::cin >> seller;
+                	{
+                    		Product product(id, name, price, maker, seller);
+                    		basket.AddProduct(product);
+                	}
+                	break;
+            		case 2:
+                		std::cout << "Ingrese el ID del producto a eliminar: ";
+                		std::cin >> id;
+                	{
+                    		Product product(id);
+                    		if (basket.DeleteProduct(product)) {
+                        		std::cout << "Producto eliminado.\n";
+                    		} 
+                    		else {
+                        		std::cout << "Producto no encontrado.\n";
+                    		}
+                	}
+                	break;
+            		case 3:
+                		std::cout << "Ingrese el ID del producto a eliminar: ";
+                		std::cin >> id;
+                		if (basket.DeleteProduct(id)) {
+                    			std::cout << "Producto eliminado.\n";
+                		} 
+                		else {
+                    			std::cout << "Producto no encontrado.\n";
+                		}
+                	break;
+            		case 4:
+                		basket.DeleteBasket();
+                		std::cout << "Cesta vaciada.\n";
+                	break;
+            		case 5:
+                		std::cout << "Número de productos en la cesta: " << basket.GetSize() << "\n";
+                	break;
+            		case 6:
+                		std::cout << "Costo total de la cesta: " << basket.GetTotal() << "\n";
+                	break;
+            		case 7: {
+                		std::vector<std::string> ids = basket.GetIds();
+                		std::cout << "IDs de productos en la cesta: ";
+                		for (const auto& id : ids) {
+                    			std::cout << id << " ";
+                		}
+                		std::cout << "\n";
+                	break;
+            		}
+            		case 8: {
+                		std::vector<int> quantities = basket.GetQs();
+                		std::cout << "Cantidades de productos en la cesta: ";
+                		for (const auto& quantity : quantities) {
+                    			std::cout << quantity << " ";
+                		}
+                		std::cout << "\n";
+                	break;
+            		}
+            		case 9:
+                		std::cout << "Saliendo...\n";
+                	break;
+            		default:
+                		std::cout << "Opción inválida. Por favor, intente de nuevo.\n";
+                	break;
+        	}
+	} while (choice != 9);
 
-std::vector<std::string> Basket::GetIds(){
-	std::vector<std::string> id_vector;
-	if(product_list_.size() == 0) {return id_vector;}
-	else {
-		std::list<Product>::iterator position;
-		for(position = product_list_.begin(); position != product_list_.end(); position++) {
-			id_vector.push_back((*position).GetId());
-		}
-		return id_vector;
-	}
-}
-
-std::vector<int> Basket::GetQs(){
-	std::vector<int> cantidad_vector;
-	if(product_list_.size() == 0) {return cantidad_vector;}
-	else {
-		std::map<std::string, int>::iterator position;
-		for(position = product_quantity_.begin(); position != product_quantity_.end(); position++) {
-			cantidad_vector.push_back((*position).second);
-		}
-		return cantidad_vector;
-	}
+	return 0;
 }
